@@ -10,6 +10,7 @@ import (
 type Page struct{
   Port string
   Url string
+	Ip string
 }
 
 func (p Page) Status(){
@@ -26,20 +27,24 @@ func (p Page) Status(){
 }
 
 func (p Page) StatusHead(){
-  res, err := http.Head(p.Url)
+  fmt.Printf("Checking: %s\n", p.Url)
+	res, err := http.Head(p.Url)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println("Serwer nie dziala\n")
+
+		makePing(p.Ip)
+	}else{
+		if res.StatusCode == 200 {
+		  fmt.Println("Serwer dziala")
+		}
 	}
-	// robots, err := ioutil.ReadAll(res.Body)
-	// res.Body.Close()
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	fmt.Printf("%s", res)
 }
 
+func makePing(ip string){
+	fmt.Println("Spradzam po adresie IP\n")
+	fmt.Println(ip)
+}
 
 func (p Page) IsIp(){
-  fmt.Printf(p.Url)
-  return
+  fmt.Printf("Checking: %s\n", p.Url)
 }
