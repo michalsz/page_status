@@ -5,6 +5,10 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"github.com/tatsushid/go-fastping"
+	"os"
+	"net"
+	"time"
 )
 
 type Page struct{
@@ -43,6 +47,24 @@ func (p Page) StatusHead(){
 func makePing(ip string){
 	fmt.Println("Spradzam po adresie IP\n")
 	fmt.Println(ip)
+
+	p := fastping.NewPinger()
+  ra, err := net.ResolveIPAddr("ip4:icmp", ip)
+  if err != nil {
+    fmt.Println(err)
+    os.Exit(1)
+  }
+	p.AddIPAddr(ra)
+  p.OnRecv = func(addr *net.IPAddr, rtt time.Duration) {
+    fmt.Printf("IP Addr: %s receive, RTT: %v\n", addr.String(), rtt)
+  }
+  p.OnIdle = func() {
+    fmt.Println("finish")
+  }
+  err = p.Run()
+  if err != nil {
+    fmt.Println(err)
+  }
 }
 
 func (p Page) IsIp(){
